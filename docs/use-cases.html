@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DNS-Mixer use cases: Network-wide DNS protection, censorship bypass, and reliability scenarios">
+    <meta name="keywords" content="DNS bypass, censorship circumvention, network protection, DNS failover">
+    <title>Use Cases - DNS-Mixer Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🌐</span>
+                <span>DNS-Mixer</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="#scenarios">Scenarios</a></li>
+                    <li><a href="#benefits">Benefits</a></li>
+                    <li><a href="technical-details.html">Technical</a></li>
+                    <li><a href="setup-guide.html">Setup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <section class="hero">
+            <div class="container">
+                <h1>Use Cases & Applications</h1>
+                <p>
+                    Discover how DNS-Mixer provides reliable DNS resolution and helps bypass
+                    restrictions in various scenarios, from home networks to enterprise environments.
+                </p>
+            </div>
+        </section>
+
+        <!-- DNS Bypass Scenarios -->
+        <section id="scenarios" class="container">
+            <h2>DNS Bypass Scenarios</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>🏠 Home Network Protection</h3>
+                <p>
+                    Transform your home router into a censorship-resistant DNS resolver. Instead of relying on
+                    your ISP's DNS servers (which may be monitored or restricted), use DNS-Mixer to route all
+                    household DNS queries through multiple international providers.
+                </p>
+                <h4>Benefits:</h4>
+                <ul>
+                    <li><strong>Network-wide protection:</strong> All devices automatically use bypass-capable DNS</li>
+                    <li><strong>Transparent setup:</strong> Configure once in router settings</li>
+                    <li><strong>Family safety:</strong> Bypass inappropriate content filters while maintaining security</li>
+                    <li><strong>Performance monitoring:</strong> OLED display shows real-time usage statistics</li>
+                </ul>
+                <h4>Setup Example:</h4>
+                <div class="code-block">
+# Router Configuration (192.168.1.1)
+Primary DNS: 192.168.1.100  # DNS-Mixer IP
+Secondary DNS: (leave blank)
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>🏢 Small Office/Home Office (SOHO)</h3>
+                <p>
+                    Ensure business continuity with reliable DNS resolution. DNS-Mixer prevents productivity
+                    loss from DNS outages by automatically failing over to backup providers.
+                </p>
+                <h4>Business Benefits:</h4>
+                <ul>
+                    <li><strong>Reliability:</strong> 99.9% uptime with multi-provider redundancy</li>
+                    <li><strong>Cost-effective:</strong> Low-cost ESP32 hardware vs expensive DNS appliances</li>
+                    <li><strong>Monitoring:</strong> Real-time statistics for network health assessment</li>
+                    <li><strong>Security:</strong> Route around malicious DNS servers</li>
+                </ul>
+                <h4>Use Cases:</h4>
+                <ul>
+                    <li>Prevent website access interruptions during DNS server maintenance</li>
+                    <li>Bypass regional content restrictions for international business</li>
+                    <li>Maintain connectivity during ISP DNS server issues</li>
+                    <li>Provide backup DNS for critical business applications</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>🎓 Educational Institutions</h3>
+                <p>
+                    Enable access to educational resources while working within institutional policies.
+                    DNS-Mixer can help access blocked educational content from international sources.
+                </p>
+                <h4>Educational Applications:</h4>
+                <ul>
+                    <li><strong>Research access:</strong> Reach international academic databases</li>
+                    <li><strong>Resource sharing:</strong> Access collaborative platforms</li>
+                    <li><strong>Remote learning:</strong> Connect to global educational tools</li>
+                    <li><strong>Content filtering:</strong> Navigate around over-restrictive filters</li>
+                </ul>
+                <h4>Implementation:</h4>
+                <ul>
+                    <li>Deploy in computer labs or libraries</li>
+                    <li>Use as alternative DNS for specific departments</li>
+                    <li>Monitor usage patterns for network planning</li>
+                    <li>Provide redundancy for educational DNS services</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>🌍 Geographic Content Access</h3>
+                <p>
+                    Access region-locked content by routing DNS queries through international providers.
+                    Perfect for accessing streaming services, news sites, and regional content libraries.
+                </p>
+                <h4>Content Access Scenarios:</h4>
+                <ul>
+                    <li><strong>Streaming services:</strong> Access geo-restricted video platforms</li>
+                    <li><strong>News sources:</strong> Reach international news outlets</li>
+                    <li><strong>Social platforms:</strong> Connect to globally distributed services</li>
+                    <li><strong>Educational content:</strong> Access international learning resources</li>
+                </ul>
+                <h4>How It Works:</h4>
+                <ol>
+                    <li>DNS query blocked by local provider</li>
+                    <li>DNS-Mixer automatically tries international provider</li>
+                    <li>Successful resolution provides access to content</li>
+                    <li>OLED display shows provider switching in real-time</li>
+                </ol>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>🔒 Privacy-Conscious Users</h3>
+                <p>
+                    Enhance online privacy by routing DNS queries through privacy-focused providers.
+                    DNS-Mixer automatically selects from Quad9, Cloudflare, and other privacy-respecting services.
+                </p>
+                <h4>Privacy Features:</h4>
+                <ul>
+                    <li><strong>No logging:</strong> Use privacy-focused DNS providers</li>
+                    <li><strong>Encrypted DNS:</strong> Route through DoT/DoH capable providers</li>
+                    <li><strong>Ad blocking:</strong> Use AdGuard DNS for ad and tracker blocking</li>
+                    <li><strong>Malware protection:</strong> Quad9 provides security filtering</li>
+                </ul>
+                <h4>Privacy Benefits:</h4>
+                <ul>
+                    <li>Prevent ISP tracking of browsing habits</li>
+                    <li>Block malicious domains automatically</li>
+                    <li>Reduce ad and tracker loading</li>
+                    <li>Maintain local network privacy</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>🚀 IoT and Embedded Systems</h3>
+                <p>
+                    Provide reliable DNS resolution for IoT devices and embedded systems that require
+                    stable network connectivity without complex DNS configuration.
+                </p>
+                <h4>IoT Applications:</h4>
+                <ul>
+                    <li><strong>Smart home devices:</strong> Reliable DNS for home automation</li>
+                    <li><strong>Industrial sensors:</strong> Stable connectivity for monitoring systems</li>
+                    <li><strong>Embedded projects:</strong> DNS resolution for microcontroller projects</li>
+                    <li><strong>Network appliances:</strong> Backup DNS for network devices</li>
+                </ul>
+                <h4>Technical Benefits:</h4>
+                <ul>
+                    <li>Minimal resource usage on ESP hardware</li>
+                    <li>Real-time monitoring via OLED display</li>
+                    <li>Automatic failover prevents connectivity issues</li>
+                    <li>Easy integration with existing networks</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Benefits Section -->
+        <section id="benefits" class="container">
+            <h2>Key Benefits</h2>
+            <div class="grid grid-3">
+                <div class="card">
+                    <span class="card-icon">🛡️</span>
+                    <h3>Reliability</h3>
+                    <p>
+                        Multi-provider redundancy ensures DNS resolution continues even when individual
+                        providers fail or are blocked. 99.9% uptime through intelligent failover.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🔓</span>
+                    <h3>Bypass Capabilities</h3>
+                    <p>
+                        Automatically work around DNS-based restrictions by routing through alternative
+                        international providers. Transparent censorship circumvention.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">📊</span>
+                    <h3>Real-time Monitoring</h3>
+                    <p>
+                        OLED display provides immediate visual feedback on DNS resolution status,
+                        provider performance, and network health statistics.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">⚡</span>
+                    <h3>Fast Response</h3>
+                    <p>
+                        50ms timeout per provider ensures quick failover. Randomized load balancing
+                        prevents single-provider bottlenecks.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">💰</span>
+                    <h3>Cost Effective</h3>
+                    <p>
+                        Low-cost ESP8266/ESP32 hardware replaces expensive DNS appliances.
+                        Minimal power consumption and maintenance requirements.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🔧</span>
+                    <h3>Easy Integration</h3>
+                    <p>
+                        Simple router configuration provides network-wide protection.
+                        No client-side software installation required.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Implementation Examples -->
+        <section class="container">
+            <h2>Implementation Examples</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>Router Integration</h3>
+                    <p><strong>Step-by-step router configuration:</strong></p>
+                    <ol>
+                        <li>Access router admin panel (192.168.1.1)</li>
+                        <li>Navigate to DNS/Network settings</li>
+                        <li>Set Primary DNS to DNS-Mixer IP (192.168.1.100)</li>
+                        <li>Leave Secondary DNS blank</li>
+                        <li>Save and reboot router</li>
+                    </ol>
+                    <p><em>Result: All devices on network automatically use DNS-Mixer</em></p>
+                </div>
+                <div class="card">
+                    <h3>Device-Specific Setup</h3>
+                    <p><strong>Individual device configuration:</strong></p>
+                    <ol>
+                        <li>Open network settings on device</li>
+                        <li>Find DNS configuration section</li>
+                        <li>Set DNS server to 192.168.1.100</li>
+                        <li>Save settings</li>
+                        <li>Test with DNS lookup</li>
+                    </ol>
+                    <p><em>Result: Specific device uses DNS-Mixer bypass capabilities</em></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Performance Metrics -->
+        <section class="container">
+            <h2>Expected Performance</h2>
+            <div class="table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Typical Value</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>DNS Resolution Time</td>
+                            <td>50-200ms</td>
+                            <td>End-to-end DNS query resolution</td>
+                        </tr>
+                        <tr>
+                            <td>Provider Failover</td>
+                            <td>< 100ms</td>
+                            <td>Time to switch providers on failure</td>
+                        </tr>
+                        <tr>
+                            <td>Success Rate</td>
+                            <td>99.5%+</td>
+                            <td>Queries successfully resolved</td>
+                        </tr>
+                        <tr>
+                            <td>Power Consumption</td>
+                            <td>80-120mA</td>
+                            <td>Typical operating current</td>
+                        </tr>
+                        <tr>
+                            <td>Memory Usage</td>
+                            <td>< 30KB</td>
+                            <td>RAM usage during operation</td>
+                        </tr>
+                        <tr>
+                            <td>Concurrent Queries</td>
+                            <td>10-20</td>
+                            <td>Simultaneous DNS requests</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Getting Started -->
+        <section class="container">
+            <h2>Getting Started</h2>
+            <div class="cta-buttons">
+                <a href="setup-guide.html" class="btn btn-primary">
+                    Setup Guide
+                </a>
+                <a href="technical-details.html" class="btn btn-secondary">
+                    Technical Details
+                </a>
+                <a href="index.html" class="btn btn-secondary">
+                    Back to Home
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div>
+                <h4>DNS-Mixer</h4>
+                <p>Intelligent DNS resolver with bypass capabilities for ESP8266/ESP32</p>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="technical-details.html">Technical Details</a></li>
+                    <li><a href="setup-guide.html">Setup Guide</a></li>
+                    <li><a href="https://github.com/lily-osp/DNS-mixer">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2024 DNS-Mixer Project. Empowering access through intelligent DNS resolution.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

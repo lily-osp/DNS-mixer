@@ -35,7 +35,7 @@ The easiest way to set up your DNS-mixer:
 ### 1. Clone and Build
 
 ```bash
-git clone https://github.com/your-repo/dns-mixer.git
+git clone https://github.com/lily-osp/DNS-mixer.git
 cd dns-mixer
 make install-deps
 make build-esp8266  # or make build-esp32

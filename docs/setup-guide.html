@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Complete setup guide for DNS-Mixer: ESP8266/ESP32 configuration, router setup, and device configuration">
+    <meta name="keywords" content="DNS-Mixer setup, ESP8266 configuration, ESP32 setup, router DNS configuration">
+    <title>Setup Guide - DNS-Mixer Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🚀</span>
+                <span>DNS-Mixer</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="use-cases.html">Use Cases</a></li>
+                    <li><a href="technical-details.html">Technical</a></li>
+                    <li><a href="#esp-setup">ESP Setup</a></li>
+                    <li><a href="#router-setup">Router Setup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <section class="hero">
+            <div class="container">
+                <h1>Complete Setup Guide</h1>
+                <p>
+                    Step-by-step instructions to get your DNS-Mixer up and running,
+                    from ESP8266/ESP32 configuration to router and device setup.
+                </p>
+            </div>
+        </section>
+
+        <!-- Quick Start -->
+        <section class="container">
+            <h2>Quick Start Overview</h2>
+            <div class="card">
+                <div class="grid grid-4">
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">🔧</div>
+                        <h4>1. Setup ESP</h4>
+                        <p>Flash firmware and configure WiFi</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">📡</div>
+                        <h4>2. Configure Router</h4>
+                        <p>Set DNS-Mixer as network DNS</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">📱</div>
+                        <h4>3. Setup Devices</h4>
+                        <p>Configure individual devices</p>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 1rem;">✅</div>
+                        <h4>4. Verify</h4>
+                        <p>Test DNS resolution</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ESP Setup Section -->
+        <section id="esp-setup" class="container">
+            <h2>ESP8266/ESP32 Setup</h2>
+
+            <!-- Prerequisites -->
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Prerequisites</h3>
+                <div class="grid grid-3">
+                    <div>
+                        <h4>Hardware Required</h4>
+                        <ul>
+                            <li>ESP8266 or ESP32 board</li>
+                            <li>SSD1306 OLED display (128x64)</li>
+                            <li>Micro-USB cable</li>
+                            <li>3.3V power supply</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Software Required</h4>
+                        <ul>
+                            <li>Python 3.x</li>
+                            <li>esptool for flashing</li>
+                            <li>mpy-cross compiler</li>
+                            <li>Terminal/Command prompt</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Network Requirements</h4>
+                        <ul>
+                            <li>WiFi network access</li>
+                            <li>DHCP-enabled router</li>
+                            <li>Available IP address</li>
+                            <li>Internet connectivity</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hardware Wiring -->
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Hardware Wiring</h3>
+                <p>Connect the SSD1306 OLED display to your ESP board:</p>
+
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>OLED Pin</th>
+                                <th>ESP8266 Pin</th>
+                                <th>ESP32 Pin</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>VCC</td>
+                                <td>3.3V</td>
+                                <td>3.3V</td>
+                                <td>Power supply</td>
+                            </tr>
+                            <tr>
+                                <td>GND</td>
+                                <td>GND</td>
+                                <td>GND</td>
+                                <td>Ground</td>
+                            </tr>
+                            <tr>
+                                <td>SCL</td>
+                                <td>GPIO 5 (D1)</td>
+                                <td>GPIO 22</td>
+                                <td>I2C Clock</td>
+                            </tr>
+                            <tr>
+                                <td>SDA</td>
+                                <td>GPIO 4 (D2)</td>
+                                <td>GPIO 21</td>
+                                <td>I2C Data</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="feature-item" style="margin-top: 2rem;">
+                    <span class="feature-icon">⚠️</span>
+                    <div class="feature-content">
+                        <h4>Important Notes</h4>
+                        <ul>
+                            <li>Use 3.3V, not 5V power for the OLED display</li>
+                            <li>Double-check pin connections before powering on</li>
+                            <li>ESP32 may require different I2C pins depending on the board variant</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Method 1: Automated Setup -->
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Method 1: Automated Setup (Recommended)</h3>
+
+                <h4>1. Install Dependencies</h4>
+                <div class="code-block">
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+
+# Install required tools
+pip install mpy-cross esptool
+                </div>
+
+                <h4>2. Clone and Build</h4>
+                <div class="code-block">
+git clone https://github.com/lily-osp/DNS-mixer.git
+cd dns-mixer
+make build-esp8266  # or make build-esp32
+                </div>
+
+                <h4>3. Configure WiFi</h4>
+                <p>Edit the WiFi settings in <code>code/main.py</code>:</p>
+                <div class="code-block">
+WIFI_SSID = "Your_WiFi_Name"
+WIFI_PASSWORD = "Your_WiFi_Password"
+STATIC_IP = "192.168.1.100"  # Choose unused IP in your network
+                </div>
+
+                <h4>4. Flash to ESP</h4>
+                <div class="code-block">
+make PORT=/dev/ttyUSB0 flash
+                </div>
+
+                <div class="badge badge-success">This method handles all dependencies automatically</div>
+            </div>
+
+            <!-- Method 2: Manual Setup -->
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Method 2: Manual Setup</h3>
+
+                <h4>1. Install MicroPython Firmware</h4>
+                <div class="code-block">
+# Download firmware from https://micropython.org/download/
+# For ESP8266:
+esptool.py --chip esp8266 --port /dev/ttyUSB0 write_flash -z 0x0 esp8266-20220618-v1.19.1.bin
+
+# For ESP32:
+esptool.py --chip esp32 --port /dev/ttyUSB0 write_flash -z 0x1000 esp32-20220618-v1.19.1.bin
+                </div>
+
+                <h4>2. Alternative: Thonny IDE</h4>
+                <ol>
+                    <li>Install <a href="https://thonny.org/" target="_blank">Thonny IDE</a></li>
+                    <li>Open Thonny and connect to your ESP board</li>
+                    <li>Go to Tools → Options → Interpreter</li>
+                    <li>Select MicroPython (ESP8266/ESP32)</li>
+                    <li>Thonny will install the firmware automatically</li>
+                </ol>
+
+                <h4>3. Upload Code</h4>
+                <div class="code-block">
+# Using ampy
+pip install adafruit-ampy
+mpy-cross code/main.py
+ampy -p /dev/ttyUSB0 put code/main.mpy
+
+# Or using Thonny IDE
+# 1. Open code/main.py in Thonny
+# 2. Save directly to ESP device
+                </div>
+            </div>
+
+            <!-- Testing ESP Setup -->
+            <div class="card">
+                <h3>Testing Your Setup</h3>
+
+                <h4>Expected Behavior</h4>
+                <ul>
+                    <li><strong>Boot Sequence:</strong> OLED shows "Connecting..." with progress animation</li>
+                    <li><strong>WiFi Connection:</strong> Display shows "WiFi Connected!" briefly</li>
+                    <li><strong>Ready State:</strong> Shows "DNS Server Ready" and IP address</li>
+                    <li><strong>DNS Requests:</strong> LED blinks and OLED shows processing status</li>
+                </ul>
+
+                <h4>Troubleshooting</h4>
+                <div class="grid grid-2">
+                    <div>
+                        <h5>WiFi Issues</h5>
+                        <ul>
+                            <li>Check SSID and password in code</li>
+                            <li>Verify WiFi signal strength</li>
+                            <li>Try different WiFi channels</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5>OLED Issues</h5>
+                        <ul>
+                            <li>Verify I2C connections</li>
+                            <li>Check 3.3V vs 5V power</li>
+                            <li>Test different I2C pins</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Router Setup Section -->
+        <section id="router-setup" class="container">
+            <h2>Router Configuration</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Network-Wide DNS Setup</h3>
+                <p>
+                    Configure your router to use DNS-Mixer for all devices on your network.
+                    This provides automatic protection for all connected devices.
+                </p>
+
+                <h4>Step 1: Find Router IP</h4>
+                <div class="grid grid-3">
+                    <div>
+                        <h5>Windows</h5>
+                        <div class="code-block">
+ipconfig
+# Look for "Default Gateway"
+                        </div>
+                    </div>
+                    <div>
+                        <h5>macOS</h5>
+                        <div class="code-block">
+System Preferences -> Network
+# Check "Router" field
+                        </div>
+                    </div>
+                    <div>
+                        <h5>Linux</h5>
+                        <div class="code-block">
+ip route show
+# or check /etc/resolv.conf
+                        </div>
+                    </div>
+                </div>
+
+                <h4>Step 2: Access Router Admin</h4>
+                <ol>
+                    <li>Open browser and enter router IP (usually 192.168.1.1)</li>
+                    <li>Enter admin username/password (default: admin/admin)</li>
+                    <li>Navigate to DNS or Network settings</li>
+                </ol>
+
+                <h4>Step 3: Configure DNS</h4>
+                <p>Router brand-specific instructions:</p>
+
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Router Brand</th>
+                                <th>Menu Path</th>
+                                <th>Setting</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>ASUS</td>
+                                <td>Advanced Settings → WAN → Internet Connection</td>
+                                <td>Set "DNS Server" to DNS-Mixer IP</td>
+                            </tr>
+                            <tr>
+                                <td>TP-Link</td>
+                                <td>Network → WAN → Dynamic IP</td>
+                                <td>Set "Primary DNS" to DNS-Mixer IP</td>
+                            </tr>
+                            <tr>
+                                <td>Netgear</td>
+                                <td>Advanced → Setup → Internet Setup</td>
+                                <td>Set "DNS Address" to DNS-Mixer IP</td>
+                            </tr>
+                            <tr>
+                                <td>Generic</td>
+                                <td>DNS/Network Settings</td>
+                                <td>Set Primary DNS to DNS-Mixer IP</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="badge badge-success">All devices on your network will now use DNS-Mixer automatically</div>
+            </div>
+        </section>
+
+        <!-- Device Configuration -->
+        <section class="container">
+            <h2>Individual Device Configuration</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Windows Configuration</h3>
+
+                <div class="grid grid-2">
+                    <div>
+                        <h4>Windows 10/11</h4>
+                        <ol>
+                            <li>Right-click Start → Settings (⚙️)</li>
+                            <li>Network & Internet → Status</li>
+                            <li>Change adapter options</li>
+                            <li>Right-click network → Properties</li>
+                            <li>Internet Protocol Version 4 (TCP/IPv4) → Properties</li>
+                            <li>Select "Use the following DNS server addresses"</li>
+                            <li>Preferred DNS server: [DNS-Mixer IP]</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>Windows 7/8</h4>
+                        <ol>
+                            <li>Control Panel → Network and Sharing Center</li>
+                            <li>Change adapter settings</li>
+                            <li>Right-click connection → Properties</li>
+                            <li>Internet Protocol Version 4 (TCP/IPv4) → Properties</li>
+                            <li>Select "Use the following DNS server addresses"</li>
+                            <li>Preferred DNS server: [DNS-Mixer IP]</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <h4>Command Line (All Windows)</h4>
+                <div class="code-block">
+# Set DNS for WiFi
+netsh interface ipv4 set dns "Wi-Fi" static 192.168.1.100
+
+# Set DNS for Ethernet
+netsh interface ipv4 set dns "Ethernet" static 192.168.1.100
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>macOS Configuration</h3>
+
+                <div class="grid grid-2">
+                    <div>
+                        <h4>macOS Monterey/Ventura/Sonoma</h4>
+                        <ol>
+                            <li>System Settings → Network</li>
+                            <li>Select network connection</li>
+                            <li>Click Details... button</li>
+                            <li>Select DNS tab</li>
+                            <li>Click + to add DNS server</li>
+                            <li>Enter DNS-Mixer IP address</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>Older macOS Versions</h4>
+                        <ol>
+                            <li>System Preferences → Network</li>
+                            <li>Select connection → Advanced...</li>
+                            <li>DNS tab → Click + button</li>
+                            <li>Enter DNS-Mixer IP address</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <h4>Terminal Method</h4>
+                <div class="code-block">
+# Temporary change (resets on reboot)
+sudo bash -c 'echo "nameserver 192.168.1.100" > /etc/resolv.conf'
+
+# Using networksetup
+networksetup -setdnsservers Wi-Fi 192.168.1.100
+networksetup -setdnsservers Ethernet 192.168.1.100
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Linux Configuration</h3>
+
+                <h4>Ubuntu/Debian (Network Manager)</h4>
+                <ol>
+                    <li>Settings → Network</li>
+                    <li>Select connection → ⚙️ (settings)</li>
+                    <li>IPv4 tab → DNS section</li>
+                    <li>Set to Manual</li>
+                    <li>Enter DNS-Mixer IP</li>
+                </ol>
+
+                <h4>Ubuntu/Debian (Netplan)</h4>
+                <div class="code-block">
+# Edit /etc/netplan/01-netcfg.yaml
+network:
+  version: 2
+  ethernets:
+    eth0:
+      dhcp4: true
+      nameservers:
+        addresses: [192.168.1.100]
+
+sudo netplan apply
+                </div>
+
+                <h4>Red Hat/CentOS/Fedora</h4>
+                <div class="code-block">
+sudo bash -c 'echo "nameserver 192.168.1.100" >> /etc/resolv.conf'
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Mobile Devices</h3>
+
+                <div class="grid grid-2">
+                    <div>
+                        <h4>Android</h4>
+                        <ol>
+                            <li>Settings → Network & internet → Wi-Fi</li>
+                            <li>Long-press your Wi-Fi network</li>
+                            <li>Modify network → Advanced options</li>
+                            <li>IP settings → Static</li>
+                            <li>Scroll to DNS 1</li>
+                            <li>Enter DNS-Mixer IP</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>iOS/iPadOS</h4>
+                        <ol>
+                            <li>Settings → Wi-Fi</li>
+                            <li>Tap ⓘ next to your network</li>
+                            <li>Configure DNS → Manual</li>
+                            <li>Delete existing DNS servers</li>
+                            <li>Tap Add Server</li>
+                            <li>Enter DNS-Mixer IP</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Gaming Consoles & Smart TVs</h3>
+
+                <div class="grid grid-3">
+                    <div>
+                        <h4>PlayStation 4/5</h4>
+                        <ol>
+                            <li>Settings → Network → Settings</li>
+                            <li>Select connection → Advanced Settings</li>
+                            <li>IP Address Settings → Manual</li>
+                            <li>DNS → Manual</li>
+                            <li>Primary DNS: DNS-Mixer IP</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>Xbox One/Series X|S</h4>
+                        <ol>
+                            <li>Settings → Network → Network settings</li>
+                            <li>Select network → Advanced settings</li>
+                            <li>DNS settings → Manual</li>
+                            <li>Primary DNS: DNS-Mixer IP</li>
+                        </ol>
+                    </div>
+                    <div>
+                        <h4>Smart TVs</h4>
+                        <ol>
+                            <li>Settings → Network → Network Status</li>
+                            <li>Select network → IP Settings</li>
+                            <li>Set DNS to Manual</li>
+                            <li>Enter DNS-Mixer IP</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Verification -->
+        <section class="container">
+            <h2>Verification & Testing</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Test DNS Resolution</h3>
+
+                <div class="grid grid-3">
+                    <div>
+                        <h4>Windows</h4>
+                        <div class="code-block">
+nslookup google.com [DNS_MIXER_IP]
+                        </div>
+                    </div>
+                    <div>
+                        <h4>macOS/Linux</h4>
+                        <div class="code-block">
+dig google.com @[DNS_MIXER_IP]
+# or
+nslookup google.com [DNS_MIXER_IP]
+                        </div>
+                    </div>
+                    <div>
+                        <h4>Web Browser</h4>
+                        <div class="code-block">
+# Visit any website
+# Check if it loads successfully
+                        </div>
+                    </div>
+                </div>
+
+                <h4>Expected Results</h4>
+                <ul>
+                    <li>DNS server responds from your DNS-Mixer IP</li>
+                    <li>Domain resolution completes successfully</li>
+                    <li>Websites load normally</li>
+                    <li>OLED display shows DNS activity</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Test Bypass Functionality</h3>
+
+                <p>Verify that DNS-Mixer can work around restrictions:</p>
+
+                <div class="code-block">
+# Test with potentially restricted domains
+nslookup twitter.com [DNS_MIXER_IP]
+nslookup youtube.com [DNS_MIXER_IP]
+nslookup github.com [DNS_MIXER_IP]
+nslookup wikipedia.org [DNS_MIXER_IP]
+                </div>
+
+                <p>Monitor the OLED display to see which DNS providers are being used for each query.</p>
+            </div>
+
+            <div class="card">
+                <h3>Performance Monitoring</h3>
+
+                <h4>Check OLED Statistics</h4>
+                <p>The OLED display shows real-time statistics:</p>
+                <ul>
+                    <li><strong>Total:</strong> Total DNS requests processed</li>
+                    <li><strong>Success:</strong> Successfully resolved queries</li>
+                    <li><strong>Failed:</strong> Queries that failed all providers</li>
+                </ul>
+
+                <h4>Expected Performance</h4>
+                <ul>
+                    <li>DNS resolution: 50-200ms average</li>
+                    <li>Success rate: 99.5%+</li>
+                    <li>LED activity: Blinks on each request</li>
+                    <li>OLED updates: Real-time status changes</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Next Steps -->
+        <section class="container">
+            <h2>Next Steps</h2>
+            <div class="cta-buttons">
+                <a href="use-cases.html" class="btn btn-primary">
+                    Explore Use Cases
+                </a>
+                <a href="technical-details.html" class="btn btn-secondary">
+                    Technical Details
+                </a>
+                <a href="index.html" class="btn btn-secondary">
+                    Back to Home
+                </a>
+            </div>
+
+            <div class="card" style="margin-top: 2rem;">
+                <h3>Getting Help</h3>
+                <p>If you encounter issues during setup:</p>
+                <ul>
+                    <li>Check the <a href="setup/server.md">detailed server setup guide</a> for ESP configuration</li>
+                    <li>Review <a href="setup/otherdevices.md">device configuration guide</a> for client setup</li>
+                    <li>Verify OLED display shows "DNS Server Ready" when setup is complete</li>
+                    <li>Test with simple DNS queries before configuring router</li>
+                </ul>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div>
+                <h4>DNS-Mixer</h4>
+                <p>Complete setup instructions for ESP8266/ESP32 DNS resolver</p>
+            </div>
+            <div>
+                <h4>Setup Sections</h4>
+                <ul class="footer-links">
+                    <li><a href="#esp-setup">ESP Setup</a></li>
+                    <li><a href="#router-setup">Router Setup</a></li>
+                    <li><a href="use-cases.html">Use Cases</a></li>
+                    <li><a href="technical-details.html">Technical Details</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2024 DNS-Mixer Project. Step-by-step setup for reliable DNS resolution.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>

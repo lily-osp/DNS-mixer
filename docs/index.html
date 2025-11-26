@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="DNS-Mixer: Intelligent DNS resolver for ESP8266/ESP32 with OLED display and bypass capabilities">
+    <meta name="keywords" content="DNS, ESP8266, ESP32, MicroPython, DNS resolver, bypass, censorship">
+    <meta name="author" content="DNS-Mixer Project">
+    <title>DNS-Mixer - Intelligent DNS Resolver for ESP8266/ESP32</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">🌐</span>
+                <span>DNS-Mixer</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="use-cases.html">Use Cases</a></li>
+                    <li><a href="technical-details.html">Technical</a></li>
+                    <li><a href="setup-guide.html">Setup</a></li>
+                    <li><a href="https://github.com/lily-osp/DNS-mixer" target="_blank">GitHub</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Intelligent DNS Resolver for ESP8266/ESP32</h1>
+                <p>
+                    DNS-Mixer is a smart DNS forwarding service that intelligently routes queries through multiple
+                    DNS providers to ensure reliability and bypass restrictions. Features real-time OLED display
+                    status and comprehensive failover mechanisms.
+                </p>
+                <div class="cta-buttons">
+                    <a href="setup-guide.html" class="btn btn-primary">
+                        Get Started
+                    </a>
+                    <a href="use-cases.html" class="btn btn-secondary">
+                        View Use Cases
+                    </a>
+                    <a href="https://github.com/lily-osp/DNS-mixer" target="_blank" class="btn btn-secondary">
+                        View on GitHub
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Features -->
+        <section id="features" class="container">
+            <h2>Key Features</h2>
+            <div class="grid grid-3">
+                <div class="card">
+                    <span class="card-icon">🔄</span>
+                    <h3>Multi-Provider Failover</h3>
+                    <p>
+                        Cycles through 9+ DNS providers including Quad9, Cloudflare, Google DNS, and AdGuard.
+                        Automatically switches providers on failure with 50ms timeout for fast response.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">📱</span>
+                    <h3>OLED Display Status</h3>
+                    <p>
+                        Real-time animated status display showing connection progress, DNS resolution status,
+                        provider information, and live statistics with smooth transitions.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🛡️</span>
+                    <h3>Restriction Bypass</h3>
+                    <p>
+                        Intelligent provider selection and failover mechanisms help bypass DNS-based
+                        restrictions and censorship by routing through alternative providers.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">⚡</span>
+                    <h3>Load Balancing</h3>
+                    <p>
+                        Randomized provider order distributes load across multiple DNS servers,
+                        preventing single-point failures and improving overall reliability.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏠</span>
+                    <h3>Router Integration</h3>
+                    <p>
+                        Easy integration with home routers for network-wide DNS resolution.
+                        Configure once to protect all devices on your network automatically.
+                    </p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🔧</span>
+                    <h3>MicroPython Optimized</h3>
+                    <p>
+                        Specifically designed for ESP8266/ESP32 with minimal resource usage.
+                        Cross-compiled bytecode ensures optimal performance on microcontroller hardware.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="container">
+            <h2>How It Works</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>DNS Resolution Process</h3>
+                    <ol>
+                        <li><strong>Request Reception:</strong> Device receives DNS query from client</li>
+                        <li><strong>Provider Selection:</strong> Randomly selects from 9+ DNS providers</li>
+                        <li><strong>Query Forwarding:</strong> Forwards query with 50ms timeout</li>
+                        <li><strong>Response Handling:</strong> Returns successful response to client</li>
+                        <li><strong>Failover:</strong> Automatically tries next provider on failure</li>
+                        <li><strong>Statistics Update:</strong> Updates OLED display with live stats</li>
+                    </ol>
+                </div>
+                <div class="card">
+                    <h3>OLED Display Features</h3>
+                    <div class="feature-item">
+                        <span class="feature-icon">📊</span>
+                        <div class="feature-content">
+                            <h4>Live Statistics</h4>
+                            <p>Real-time display of total requests, successes, and failures</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔄</span>
+                        <div class="feature-content">
+                            <h4>Animated Status</h4>
+                            <p>Progress bars, spinners, and smooth transitions</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">📡</span>
+                        <div class="feature-content">
+                            <h4>Provider Display</h4>
+                            <p>Shows current DNS provider being tested</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <div class="feature-content">
+                            <h4>Status Updates</h4>
+                            <p>Immediate feedback on connection and resolution status</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interactive Demo -->
+        <section class="container">
+            <h2>Interactive Demonstration</h2>
+            <div class="grid grid-2">
+                <div class="card" id="dns-demo">
+                    <h3>DNS Resolution Demo</h3>
+                    <p>Experience how DNS-Mixer handles DNS queries with provider failover:</p>
+                    <button class="btn btn-primary start-demo">Run Demo</button>
+                    <div class="demo-status text-secondary" style="margin-top: 1rem; min-height: 60px;">
+                        Click "Run Demo" to simulate DNS resolution with provider failover
+                    </div>
+                    <div class="progress-bar" style="margin-top: 1rem;">
+                        <div class="progress-fill" style="width: 0%;"></div>
+                    </div>
+                </div>
+                <div class="card" id="oled-demo">
+                    <h3>OLED Display Simulator</h3>
+                    <p>See how the OLED display shows real-time status:</p>
+                    <button class="btn btn-primary start-demo">Run Demo</button>
+                    <div class="oled-display text-center" style="margin-top: 1rem; background: #2d3748; color: #e2e8f0; padding: 2rem; border-radius: 8px; font-family: monospace; min-height: 80px; display: flex; align-items: center; justify-content: center;">
+                        DNS-mixer Ready
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Supported Hardware -->
+        <section class="container">
+            <h2>Supported Hardware</h2>
+            <div class="grid grid-2">
+                <div class="card">
+                    <h3>ESP8266 Boards</h3>
+                    <p>Perfect for cost-effective DNS solutions:</p>
+                    <ul>
+                        <li>NodeMCU ESP8266</li>
+                        <li>Wemos D1 Mini</li>
+                        <li>ESP-01 modules</li>
+                        <li>Most ESP8266 development boards</li>
+                    </ul>
+                    <div class="badge badge-success" style="margin-top: 1rem;">Recommended for budget setups</div>
+                </div>
+                <div class="card">
+                    <h3>ESP32 Boards</h3>
+                    <p>Enhanced performance and features:</p>
+                    <ul>
+                        <li>ESP32 DevKitC</li>
+                        <li>ESP32-WROOM-32</li>
+                        <li>Lolin32 boards</li>
+                        <li>All ESP32 variants</li>
+                    </ul>
+                    <div class="badge badge-success" style="margin-top: 1rem;">Better for complex applications</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Requirements -->
+        <section class="container">
+            <h2>Requirements</h2>
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>Hardware</h3>
+                    <ul>
+                        <li>ESP8266 or ESP32 board</li>
+                        <li>SSD1306 OLED display (128x64)</li>
+                        <li>USB cable for programming</li>
+                        <li>Power supply (3.3V)</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Software</h3>
+                    <ul>
+                        <li>MicroPython firmware</li>
+                        <li>Python 3.x for building</li>
+                        <li>esptool for flashing</li>
+                        <li>mpy-cross compiler</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Network</h3>
+                    <ul>
+                        <li>WiFi access point</li>
+                        <li>DHCP-capable router</li>
+                        <li>Available IP address</li>
+                        <li>Internet connectivity</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Start -->
+        <section class="container">
+            <h2>Quick Start</h2>
+            <div class="grid grid-2">
+                <div>
+                    <h3>1. Get the Code</h3>
+                    <div class="code-block">
+git clone https://github.com/lily-osp/DNS-mixer.git
+cd dns-mixer
+                    </div>
+
+                    <h3>2. Install Dependencies</h3>
+                    <div class="code-block">
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+pip install mpy-cross esptool
+                    </div>
+
+                    <h3>3. Configure WiFi</h3>
+                    <div class="code-block">
+# Edit code/main.py
+WIFI_SSID = "Your_WiFi_Name"
+WIFI_PASSWORD = "Your_WiFi_Password"
+STATIC_IP = "192.168.1.100"
+                    </div>
+                </div>
+                <div>
+                    <h3>4. Build and Flash</h3>
+                    <div class="code-block">
+make build-esp8266  # or build-esp32
+make PORT=/dev/ttyUSB0 flash
+                    </div>
+
+                    <h3>5. Configure Router</h3>
+                    <p>Set your router's DNS server to the DNS-Mixer's IP address (192.168.1.100)</p>
+
+                    <h3>6. Monitor OLED</h3>
+                    <p>Watch the OLED display for real-time status and statistics</p>
+
+                    <div class="cta-buttons" style="margin-top: 2rem;">
+                        <a href="setup-guide.html" class="btn btn-primary">Detailed Setup Guide</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div>
+                <h4>DNS-Mixer</h4>
+                <p>Intelligent DNS resolver for ESP8266/ESP32 with OLED display and bypass capabilities.</p>
+                <ul class="footer-links">
+                    <li><a href="use-cases.html">Use Cases</a></li>
+                    <li><a href="technical-details.html">Technical Details</a></li>
+                    <li><a href="setup-guide.html">Setup Guide</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Resources</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/lily-osp/DNS-mixer" target="_blank">GitHub Repository</a></li>
+                    <li><a href="https://micropython.org" target="_blank">MicroPython</a></li>
+                    <li><a href="https://docs.micropython.org" target="_blank">MicroPython Docs</a></li>
+                    <li><a href="https://github.com/espressif" target="_blank">Espressif</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Community</h4>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/lily-osp/DNS-mixer/issues" target="_blank">Report Issues</a></li>
+                    <li><a href="https://github.com/lily-osp/DNS-mixer/discussions" target="_blank">Discussions</a></li>
+                    <li><a href="https://github.com/lily-osp/DNS-mixer/pulls" target="_blank">Contribute</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2024 DNS-Mixer Project. Licensed under MIT. Built with ❤️ for the IoT community.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="js/main.js"></script>
+
+    <!-- Analytics (optional) -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_TRACKING_ID"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'GA_TRACKING_ID');
+    </script> -->
+</body>
+</html>

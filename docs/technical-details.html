@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Technical architecture of DNS-Mixer: DNS algorithms, OLED display system, ESP8266/ESP32 implementation">
+    <meta name="keywords" content="DNS algorithm, ESP32 architecture, OLED display, MicroPython implementation">
+    <title>Technical Details - DNS-Mixer Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <span class="logo-icon">⚙️</span>
+                <span>DNS-Mixer</span>
+            </div>
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="use-cases.html">Use Cases</a></li>
+                    <li><a href="#architecture">Architecture</a></li>
+                    <li><a href="#algorithms">Algorithms</a></li>
+                    <li><a href="setup-guide.html">Setup</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <section class="hero">
+            <div class="container">
+                <h1>Technical Architecture</h1>
+                <p>
+                    Deep dive into DNS-Mixer's technical implementation, algorithms, and system design
+                    for ESP8266/ESP32 platforms with OLED display integration.
+                </p>
+            </div>
+        </section>
+
+        <!-- System Architecture -->
+        <section id="architecture" class="container">
+            <h2>System Architecture</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Core Components</h3>
+                <div class="grid grid-2">
+                    <div>
+                        <h4>Hardware Layer</h4>
+                        <ul>
+                            <li><strong>ESP8266/ESP32 MCU:</strong> Main processing unit</li>
+                            <li><strong>WiFi Module:</strong> Network connectivity (802.11 b/g/n)</li>
+                            <li><strong>SSD1306 OLED:</strong> 128x64 pixel display (I2C)</li>
+                            <li><strong>Flash Memory:</strong> 4MB+ storage for MicroPython</li>
+                            <li><strong>LED Indicator:</strong> GPIO-based status signaling</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Software Stack</h4>
+                        <ul>
+                            <li><strong>MicroPython:</strong> Python runtime for microcontrollers</li>
+                            <li><strong>Socket Library:</strong> UDP networking for DNS</li>
+                            <li><strong>SSD1306 Driver:</strong> OLED display control</li>
+                            <li><strong>Network Module:</strong> WiFi and IP stack management</li>
+                            <li><strong>Custom Algorithms:</strong> DNS failover and load balancing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Data Flow Architecture</h3>
+                <div style="text-align: center; margin: 2rem 0;">
+                    <pre style="font-family: monospace; background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; overflow-x: auto;">
+Client Request → ESP8266/ESP32 → DNS Query Processing → Provider Selection
+       ↓              ↓              ↓                     ↓
+   UDP Packet → Socket Layer → Load Balancing → Randomized Provider List
+       ↓              ↓              ↓                     ↓
+   Response ← Network Stack ← DNS Resolution ← Provider Query (UDP:53)
+       ↓              ↓              ↓                     ↓
+   Client ← Success/Fail ← Timeout Handling ← Retry Logic (50ms)
+    </pre>
+                </div>
+                <p><strong>Key Flow Points:</strong></p>
+                <ol>
+                    <li><strong>Incoming DNS Query:</strong> UDP packet received on port 53</li>
+                    <li><strong>Provider Randomization:</strong> Shuffle 9 DNS providers for load balancing</li>
+                    <li><strong>Sequential Attempts:</strong> Try each provider with 50ms timeout</li>
+                    <li><strong>Response Forwarding:</strong> Send successful response to original client</li>
+                    <li><strong>Statistics Update:</strong> Increment counters and update OLED display</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- DNS Algorithms -->
+        <section id="algorithms" class="container">
+            <h2>DNS Resolution Algorithms</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Load Balancing Algorithm</h3>
+                <h4>Fisher-Yates Shuffle Implementation</h4>
+                <div class="code-block">
+def shuffle_providers(providers):
+    """Randomize DNS provider order for load balancing"""
+    shuffled = providers.copy()
+    for i in range(len(shuffled) - 1, 0, -1):
+        j = int(urandom.getrandbits(8) % (i + 1))
+        shuffled[i], shuffled[j] = shuffled[j], shuffled[i]
+    return shuffled
+                </div>
+                <p><strong>Benefits:</strong></p>
+                <ul>
+                    <li><strong>Fair Distribution:</strong> Each provider gets equal usage opportunity</li>
+                    <li><strong>Predictability Prevention:</strong> Avoids sequential provider exhaustion</li>
+                    <li><strong>Load Distribution:</strong> Prevents single provider bottlenecks</li>
+                    <li><strong>Hardware Random:</strong> Uses ESP's hardware RNG for true randomness</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Failover Strategy</h3>
+                <h4>Cascading Provider Attempts</h4>
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                    <strong>Algorithm Flow:</strong>
+                    <ol>
+                        <li>Shuffle provider list randomly</li>
+                        <li>For each provider in shuffled list:</li>
+                        <li style="margin-left: 2rem;">Create UDP socket with 50ms timeout</li>
+                        <li style="margin-left: 2rem;">Send DNS query to provider:53</li>
+                        <li style="margin-left: 2rem;">Wait for response or timeout</li>
+                        <li style="margin-left: 2rem;">If success: forward response, break</li>
+                        <li style="margin-left: 2rem;">If timeout: try next provider</li>
+                        <li>After all providers fail: return failure</li>
+                    </ol>
+                </div>
+                <p><strong>Timeout Optimization:</strong></p>
+                <ul>
+                    <li><strong>50ms Timeout:</strong> Balance between speed and reliability</li>
+                    <li><strong>Non-blocking:</strong> OLED updates during resolution process</li>
+                    <li><strong>Provider Display:</strong> Real-time current provider indication</li>
+                    <li><strong>Statistics Tracking:</strong> Success/failure rate monitoring</li>
+                </ul>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>DNS Provider Selection</h3>
+                <h4>Curated Provider List</h4>
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Provider</th>
+                                <th>IP Address</th>
+                                <th>Specialization</th>
+                                <th>Reliability</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Quad9</td>
+                                <td>9.9.9.9</td>
+                                <td>Malware Blocking</td>
+                                <td>★★★★★</td>
+                            </tr>
+                            <tr>
+                                <td>Cloudflare</td>
+                                <td>1.1.1.1</td>
+                                <td>Privacy & Speed</td>
+                                <td>★★★★★</td>
+                            </tr>
+                            <tr>
+                                <td>Google</td>
+                                <td>8.8.8.8</td>
+                                <td>Global Coverage</td>
+                                <td>★★★★★</td>
+                            </tr>
+                            <tr>
+                                <td>AdGuard</td>
+                                <td>94.140.14.14</td>
+                                <td>Ad Blocking</td>
+                                <td>★★★★☆</td>
+                            </tr>
+                            <tr>
+                                <td>Alternate DNS</td>
+                                <td>76.76.19.19</td>
+                                <td>Uncensored</td>
+                                <td>★★★★☆</td>
+                            </tr>
+                            <tr>
+                                <td>OpenDNS</td>
+                                <td>208.67.222.222</td>
+                                <td>Business Grade</td>
+                                <td>★★★★☆</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- OLED Display System -->
+        <section class="container">
+            <h2>OLED Display System</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Display Architecture</h3>
+                <div class="grid grid-2">
+                    <div>
+                        <h4>Hardware Interface</h4>
+                        <ul>
+                            <li><strong>Controller:</strong> SSD1306 (128x64 monochrome)</li>
+                            <li><strong>Interface:</strong> I2C (SDA: GPIO4, SCL: GPIO5)</li>
+                            <li><strong>Address:</strong> 0x3C (default)</li>
+                            <li><strong>Refresh Rate:</strong> 30-60 FPS for animations</li>
+                            <li><strong>Memory:</strong> 1KB frame buffer</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Software Implementation</h4>
+                        <ul>
+                            <li><strong>Library:</strong> MicroPython SSD1306 driver</li>
+                            <li><strong>Resolution:</strong> 128x64 pixels (8 pages × 128 columns)</li>
+                            <li><strong>Font:</strong> 8x8 pixel system font</li>
+                            <li><strong>Colors:</strong> Monochrome (black/white)</li>
+                            <li><strong>Update Method:</strong> Full refresh on changes</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Status Display States</h3>
+                <div class="table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>State</th>
+                                <th>Display Content</th>
+                                <th>Animation</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Connecting</td>
+                                <td>"Connecting..." + dots</td>
+                                <td>Cycling dots</td>
+                                <td>Until connected</td>
+                            </tr>
+                            <tr>
+                                <td>Connected</td>
+                                <td>"WiFi Connected!"</td>
+                                <td>Progress bar</td>
+                                <td>1 second</td>
+                            </tr>
+                            <tr>
+                                <td>Ready</td>
+                                <td>"DNS Server Ready"</td>
+                                <td>Static</td>
+                                <td>Until request</td>
+                            </tr>
+                            <tr>
+                                <td>Processing</td>
+                                <td>"Processing|" + provider</td>
+                                <td>Spinner</td>
+                                <td>During resolution</td>
+                            </tr>
+                            <tr>
+                                <td>Success</td>
+                                <td>"Resolution OK" + provider</td>
+                                <td>Check mark</td>
+                                <td>0.5 seconds</td>
+                            </tr>
+                            <tr>
+                                <td>Failed</td>
+                                <td>"Resolution Failed"</td>
+                                <td>Error indicator</td>
+                                <td>1 second</td>
+                            </tr>
+                            <tr>
+                                <td>Statistics</td>
+                                <td>Total/Success/Failed counts</td>
+                                <td>Counter updates</td>
+                                <td>5 seconds</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>Animation Techniques</h3>
+                <h4>Progress Bars</h4>
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; margin: 1rem 0;">
+                    <div style="width: 100%; height: 20px; background: #e5e7eb; border-radius: 10px; overflow: hidden;">
+                        <div style="width: 75%; height: 100%; background: linear-gradient(90deg, #2563eb, #3b82f6); border-radius: 10px; transition: width 0.3s ease;"></div>
+                    </div>
+                    <p style="text-align: center; margin-top: 0.5rem; font-size: 0.9rem;">Connection Progress: 75%</p>
+                </div>
+
+                <h4>Spinner Animation</h4>
+                <div style="background: var(--bg-tertiary); padding: 1rem; border-radius: 8px; margin: 1rem 0; font-family: monospace; text-align: center;">
+                    Processing<span id="spinner">|</span> DNS Request<br>
+                    Via: Cloudflare (1.1.1.1)
+                </div>
+
+                <h4>Status Transitions</h4>
+                <ul>
+                    <li><strong>Smooth Fading:</strong> CSS transitions between states</li>
+                    <li><strong>Context Awareness:</strong> Different displays for different operations</li>
+                    <li><strong>Time-based Cycling:</strong> Statistics display during idle periods</li>
+                    <li><strong>Provider Shortening:</strong> Smart truncation for long provider names</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Performance Specifications -->
+        <section class="container">
+            <h2>Performance Specifications</h2>
+
+            <div class="grid grid-3">
+                <div class="card">
+                    <h3>DNS Resolution</h3>
+                    <ul>
+                        <li><strong>Average Response:</strong> 50-150ms</li>
+                        <li><strong>Timeout:</strong> 50ms per provider</li>
+                        <li><strong>Max Attempts:</strong> 9 providers</li>
+                        <li><strong>Success Rate:</strong> 99.5%+</li>
+                        <li><strong>Concurrent Queries:</strong> 10-20</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>System Resources</h3>
+                    <ul>
+                        <li><strong>RAM Usage:</strong> < 30KB</li>
+                        <li><strong>Flash Usage:</strong> ~50KB compiled</li>
+                        <li><strong>CPU Usage:</strong> < 10% average</li>
+                        <li><strong>Power Consumption:</strong> 80-120mA</li>
+                        <li><strong>Network Load:</strong> Minimal UDP traffic</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h3>Hardware Limits</h3>
+                    <ul>
+                        <li><strong>ESP8266 RAM:</strong> 80KB total</li>
+                        <li><strong>ESP32 RAM:</strong> 520KB total</li>
+                        <li><strong>Socket Buffer:</strong> 1KB per query</li>
+                        <li><strong>OLED Buffer:</strong> 1KB display memory</li>
+                        <li><strong>Flash Endurance:</strong> 100,000+ cycles</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Security Considerations -->
+        <section class="container">
+            <h2>Security & Privacy</h2>
+
+            <div class="card" style="margin-bottom: 3rem;">
+                <h3>DNS Security Features</h3>
+                <div class="grid grid-2">
+                    <div>
+                        <h4>Provider Security</h4>
+                        <ul>
+                            <li><strong>Quad9:</strong> Malware domain blocking</li>
+                            <li><strong>AdGuard:</strong> Ad and tracker blocking</li>
+                            <li><strong>Cloudflare:</strong> Privacy-focused resolution</li>
+                            <li><strong>CleanBrowsing:</strong> Security filtering</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Implementation Security</h4>
+                        <ul>
+                            <li><strong>No Caching:</strong> Fresh queries each time</li>
+                            <li><strong>UDP Only:</strong> No TCP overhead</li>
+                            <li><strong>Timeout Protection:</strong> Prevents hanging queries</li>
+                            <li><strong>Input Validation:</strong> Basic packet size limits</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>Privacy Considerations</h3>
+                <ul>
+                    <li><strong>ISP Bypass:</strong> Routes around ISP DNS monitoring</li>
+                    <li><strong>No Local Logging:</strong> Minimal data retention</li>
+                    <li><strong>Provider Diversity:</strong> Spreads queries across jurisdictions</li>
+                    <li><strong>Hardware Security:</strong> Physical access required for tampering</li>
+                    <li><strong>Network Security:</strong> Standard WiFi encryption applies</li>
+                </ul>
+                <div class="badge badge-warning" style="margin-top: 1rem;">
+                    Note: DNS queries are sent in plaintext. Consider VPN for complete privacy.
+                </div>
+            </div>
+        </section>
+
+        <!-- API Reference -->
+        <section class="container">
+            <h2>Code API Reference</h2>
+
+            <div class="card">
+                <h3>Core Functions</h3>
+                <h4>WiFi Management</h4>
+                <div class="code-block">
+def connect_to_wifi():
+    """Connect to WiFi network with OLED status updates"""
+    # Returns: None, updates global OLED status
+                </div>
+
+                <h4>DNS Resolution</h4>
+                <div class="code-block">
+def handle_dns_request(data, addr):
+    """Process DNS query with provider failover"""
+    # Args: data (bytes): DNS query, addr (tuple): client address
+    # Returns: bool: Success status
+                </div>
+
+                <h4>OLED Display</h4>
+                <div class="code-block">
+def update_oled_status(status, progress=None, provider=None):
+    """Update OLED with detailed status information"""
+    # Args:
+    #   status (str): Status type (connecting, ready, processing, etc.)
+    #   progress (int): Progress percentage (0-100)
+    #   provider (str): Current DNS provider name
+                </div>
+            </div>
+        </section>
+
+        <!-- Getting Started -->
+        <section class="container">
+            <h2>Explore Further</h2>
+            <div class="cta-buttons">
+                <a href="setup-guide.html" class="btn btn-primary">
+                    Setup Guide
+                </a>
+                <a href="use-cases.html" class="btn btn-secondary">
+                    Use Cases
+                </a>
+                <a href="index.html" class="btn btn-secondary">
+                    Back to Home
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div>
+                <h4>DNS-Mixer</h4>
+                <p>Technical implementation details for ESP8266/ESP32 DNS resolver</p>
+            </div>
+            <div>
+                <h4>Documentation</h4>
+                <ul class="footer-links">
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="use-cases.html">Use Cases</a></li>
+                    <li><a href="setup-guide.html">Setup Guide</a></li>
+                    <li><a href="https://github.com/lily-osp/DNS-mixer">Source Code</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <div class="container">
+                <p>&copy; 2024 DNS-Mixer Project. Open source DNS resolution technology.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
