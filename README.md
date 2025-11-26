@@ -10,8 +10,8 @@ Welcome to DNS-mixer! This is a MicroPython-based DNS forwarding service for ESP
 2. [Requirements](#requirements)
 3. [Hardware Setup](#hardware-setup)
 4. [Configuration](#configuration)
-    - [WiFi Configuration](#wifi-configuration)
-    - [DNS Providers](#dns-providers)
+   - [WiFi Configuration](#wifi-configuration)
+   - [DNS Providers](#dns-providers)
 5. [Building and Flashing](#building-and-flashing)
 6. [Usage](#usage)
 7. [Troubleshooting](#troubleshooting)
@@ -28,7 +28,8 @@ DNS-mixer is a MicroPython-based DNS resolver for ESP8266/ESP32 devices that int
 - **Load Balancing**: Randomizes provider order to distribute load and avoid single points of failure
 - **Restriction Bypass**: Works around DNS blocking by trying multiple providers until one succeeds
 - **Router Integration**: Configure as DNS server in router settings for network-wide protection
-- **Real-time Monitoring**: OLED display shows live statistics and connection status
+- **Enhanced OLED Display**: Real-time animated status messages, progress bars, and detailed processing feedback
+- **Visual Status System**: Animated connection progress, processing spinners, and success/failure indicators
 - **Low Resource Usage**: Optimized for ESP8266/ESP32 with minimal memory footprint
 
 ## Requirements
@@ -41,6 +42,7 @@ DNS-mixer is a MicroPython-based DNS resolver for ESP8266/ESP32 devices that int
 ## Hardware Setup
 
 ### OLED Display Connection
+
 - SDA: GPIO 4 (D2 on ESP8266)
 - SCL: GPIO 5 (D1 on ESP8266)
 - VCC: 3.3V
@@ -50,22 +52,22 @@ DNS-mixer is a MicroPython-based DNS resolver for ESP8266/ESP32 devices that int
 
 ### ESP32 vs ESP8266 Comparison
 
-| Feature | ESP8266 | ESP32 |
-|---------|---------|--------|
-| **Processor** | 32-bit RISC (80 MHz) | Dual-core 32-bit (160-240 MHz) |
-| **RAM** | 80 KB | 520 KB |
-| **Flash** | External (up to 16 MB) | External (up to 16 MB) |
-| **WiFi** | 802.11 b/g/n (2.4 GHz only) | 802.11 b/g/n (2.4 GHz) + Bluetooth 4.2 |
-| **GPIO Pins** | 17 | 34 |
-| **ADC Channels** | 1 (10-bit) | 18 (12-bit) |
-| **PWM Channels** | 4 | 16 |
-| **I2C** | 1 | 2 |
-| **SPI** | 1 | 4 |
-| **UART** | 1 | 3 |
-| **Power Consumption** | Lower | Higher |
-| **Cost** | Lower (~$2-3) | Higher (~$4-6) |
-| **MicroPython Performance** | Good for simple tasks | Better for complex applications |
-| **DNS-mixer Suitability** | Excellent (simpler, cheaper) | Excellent (more powerful, faster) |
+| Feature                           | ESP8266                      | ESP32                                  |
+| --------------------------------- | ---------------------------- | -------------------------------------- |
+| **Processor**               | 32-bit RISC (80 MHz)         | Dual-core 32-bit (160-240 MHz)         |
+| **RAM**                     | 80 KB                        | 520 KB                                 |
+| **Flash**                   | External (up to 16 MB)       | External (up to 16 MB)                 |
+| **WiFi**                    | 802.11 b/g/n (2.4 GHz only)  | 802.11 b/g/n (2.4 GHz) + Bluetooth 4.2 |
+| **GPIO Pins**               | 17                           | 34                                     |
+| **ADC Channels**            | 1 (10-bit)                   | 18 (12-bit)                            |
+| **PWM Channels**            | 4                            | 16                                     |
+| **I2C**                     | 1                            | 2                                      |
+| **SPI**                     | 1                            | 4                                      |
+| **UART**                    | 1                            | 3                                      |
+| **Power Consumption**       | Lower                        | Higher                                 |
+| **Cost**                    | cheaper                      | more expensive                         |
+| **MicroPython Performance** | Good for simple tasks        | Better for complex applications        |
+| **DNS-mixer Suitability**   | Excellent (simpler, cheaper) | Excellent (more powerful, faster)      |
 
 **Recommendation**: Use ESP8266 for cost-effective deployments. Use ESP32 for more demanding applications or when you need Bluetooth connectivity.
 
@@ -100,6 +102,7 @@ DNS_PROVIDERS_IPV4 = [
 ```
 
 **Provider Benefits for Bypass:**
+
 - **Multiple Countries**: Providers from different jurisdictions reduce blocking likelihood
 - **Privacy-Focused**: Quad9, Cloudflare offer enhanced privacy
 - **Uncensored Options**: Alternate DNS, Control D provide unrestricted access
@@ -140,11 +143,13 @@ The project includes automated build scripts for both boards:
 ### Manual Build
 
 1. Install dependencies:
+
 ```bash
 pip install mpy-cross esptool
 ```
 
 2. Compile the main script:
+
 ```bash
 mpy-cross code/main.py
 ```
@@ -179,6 +184,7 @@ The project includes GitHub Actions workflows for automated building:
 ### Basic Operation
 
 The device will automatically:
+
 1. Connect to the configured WiFi network
 2. Start the DNS server on port 53
 3. Display connection status and statistics on the OLED screen
@@ -189,11 +195,14 @@ The device will automatically:
 To use DNS-mixer network-wide, configure your router to use it as the DNS server:
 
 #### 1. Access Router Admin Panel
+
 - Open browser and go to your router's IP (usually 192.168.1.1 or 192.168.0.1)
 - Login with admin credentials
 
 #### 2. Configure DNS Settings
+
 Look for DNS settings in:
+
 - **Network Settings > DHCP Settings**
 - **Advanced > Network > DNS**
 - **WAN Settings > DNS Configuration**
@@ -203,7 +212,9 @@ Set the **Primary DNS** to your DNS-mixer's IP address (default: `192.168.8.180`
 > **Router Setup Guide**: For detailed router configuration instructions for ASUS, TP-Link, Netgear, and other brands, see [setup/otherdevices.md](setup/otherdevices.md#router-configuration-network-wide).
 
 #### 3. Alternative: Device-Level Configuration
+
 Configure individual devices to use DNS-mixer:
+
 - **Windows**: Network Settings > Change adapter options > Properties > IPv4 > DNS server
 - **macOS**: System Preferences > Network > Advanced > DNS
 - **Linux**: Edit `/etc/resolv.conf` or network manager
@@ -220,7 +231,38 @@ DNS-mixer helps bypass DNS-based restrictions by:
 3. **Fast Switching**: 50ms timeout ensures quick fallback to working providers
 4. **Multiple Providers**: 9+ providers including international ones (Quad9, Cloudflare, Google, AdGuard, etc.)
 
+### OLED Display Status
+
+The OLED display provides real-time visual feedback with detailed status messages and animations:
+
+#### **Connection Phase**
+
+- **"Connecting..."** - Animated dots showing connection progress
+- **"WiFi Connected!"** - Confirmation of successful WiFi connection
+- **"DNS Server Ready"** - Device ready to handle requests
+
+#### **Active Processing**
+
+- **"Processing|"** - Animated spinner (|, /, -, \) during DNS resolution
+- **Provider name** - Shows which DNS provider is being tried
+- **"Resolution OK"** - Success confirmation with provider name
+- **"Resolution Failed"** - Error message when all providers fail
+
+#### **Statistics View**
+
+- **Total requests** - Cumulative DNS requests processed
+- **Success count** - Successful resolutions
+- **Failed count** - Unsuccessful attempts
+
+#### **Animations & Transitions**
+
+- **Progress bars** - Visual progress during connection
+- **Spinner animations** - Processing indicators
+- **Status transitions** - Smooth changes between states
+- **Auto-cycling** - Statistics display every few seconds of inactivity
+
 ### LED Indicators
+
 - **5 blinks**: Device connected to WiFi
 - **1 short blink**: DNS request received
 - **1 very short blink**: DNS resolution successful
@@ -229,12 +271,14 @@ DNS-mixer helps bypass DNS-based restrictions by:
 ## Troubleshooting
 
 > **Detailed Troubleshooting**: For comprehensive troubleshooting guides including hardware issues, WiFi problems, DNS resolution failures, and device-specific problems, see:
+>
 > - [setup/server.md](setup/server.md#troubleshooting) - ESP device setup issues
 > - [setup/otherdevices.md](setup/otherdevices.md#troubleshooting) - Client device configuration problems
 
 ### Quick Troubleshooting Tips
 
 If you encounter issues:
+
 - Verify OLED display shows connection status and IP address
 - Check LED indicators for error patterns
 - Test DNS resolution with `nslookup google.com [DNS_MIXER_IP]`
