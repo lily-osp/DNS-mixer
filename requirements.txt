@@ -1,0 +1,8 @@
+# MicroPython Dependencies for DNS-mixer
+# Install these on your ESP device using upip or mip
+
+# OLED Display Driver
+ssd1306
+
+# Note: Core modules (network, socket, machine, time) are built into MicroPython
+# and don't need to be installed separately

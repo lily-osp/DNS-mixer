@@ -22,7 +22,9 @@ LED = machine.Pin(2, machine.Pin.OUT)
 def connect_to_wifi():
     sta_if = network.WLAN(network.STA_IF)
     sta_if.active(True)
-    sta_if.ifconfig((STATIC_IP, "255.255.255.0", "192.168.8.1", "8.8.8.8"))
+    # Set static IP but don't configure DNS (let it use default or none)
+    # This prevents conflicts since this device IS the DNS server
+    sta_if.ifconfig((STATIC_IP, "255.255.255.0", "192.168.8.1", None))
     sta_if.connect(WIFI_SSID, WIFI_PASSWORD)
 
     while not sta_if.isconnected():
@@ -41,21 +43,29 @@ def blink(num_blinks, on_duration, off_duration):
         LED.value(0)
         time.sleep(off_duration)
 
-# Function to handle DNS requests
+# Function to handle DNS requests with load balancing
 def handle_dns_request(data, addr):
+    import urandom
+
     print("Received DNS request from:", addr)
 
     blink(1, 0.05, 0)  # Blink for 0.05s on new request
 
     success = False
 
-    # Iterate through each DNS provider and try to resolve using the first one that responds
-    for dns_provider in DNS_PROVIDERS_IPV4:
+    # Shuffle DNS providers for load balancing and redundancy
+    shuffled_providers = DNS_PROVIDERS_IPV4.copy()
+    for i in range(len(shuffled_providers) - 1, 0, -1):
+        j = int(urandom.getrandbits(8) % (i + 1))
+        shuffled_providers[i], shuffled_providers[j] = shuffled_providers[j], shuffled_providers[i]
+
+    # Try each DNS provider in randomized order
+    for dns_provider in shuffled_providers:
         print("Trying DNS provider:", dns_provider)
 
         # Create a UDP socket to forward the DNS request
         dns_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        dns_socket.settimeout(0.03)
+        dns_socket.settimeout(0.05)  # Slightly longer timeout for better reliability
 
         try:
             dns_socket.sendto(data, (dns_provider, 53))
@@ -64,15 +74,16 @@ def handle_dns_request(data, addr):
             server_socket.sendto(response, addr)
             blink(1, 0.02, 0)  # Blink for 0.02s on success
             success = True
+            print("Success using DNS provider:", dns_provider)
             break
-        except:
-            print("Failed to resolve using DNS provider:", dns_provider)
+        except Exception as e:
+            print("Failed to resolve using DNS provider:", dns_provider, "Error:", str(e))
         finally:
             dns_socket.close()
 
     if not success:
         blink(1, 0.5, 0)  # Blink for 0.5s on failure
-        print("Failed to forward DNS request")
+        print("Failed to forward DNS request - all providers unreachable")
 
     return success
 
