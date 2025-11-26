@@ -254,6 +254,8 @@ The OLED display provides real-time visual feedback with detailed status message
 - **Success count** - Successful resolutions
 - **Failed count** - Unsuccessful attempts
 
+> **📸 Demo Image**: See [demo.jpg](docs/images/demo.jpg) for a real photo of the OLED display showing live statistics.
+
 #### **Animations & Transitions**
 
 - **Progress bars** - Visual progress during connection
